@@ -1,20 +1,21 @@
-"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter, useSearchParams } from "next/navigation";
-import HOSTPORT from "@/env";
+import HOSTPORT from "../../env";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
-const Constituent = ({ slug }) => {
-  console.log("slug", slug);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const historical = searchParams.get("historical") === "true" || false;
-  console.log("historical", historical);
+const Constituent = () => {
+  let { slug } = useParams();
+
+  const { search } = useLocation();
+  const navigate = useNavigate();
+
+  const queryParams = new URLSearchParams(search);
+  const historical = queryParams.get("historical") === "true" || false;
   const [constituents, setConstituents] = useState([]);
 
   useEffect(() => {
     getConstituent();
-  }, [historical]);
+  }, [historical, slug]);
 
   const getConstituent = () => {
     axios
@@ -32,7 +33,7 @@ const Constituent = ({ slug }) => {
     <div>
       <div className="my-2 flex justify-around items-center">
         <button
-          onClick={() => router.push("/constituent/sp500")}
+          onClick={() => navigate("/constituent/sp500")}
           className={`border border-gray-500 border-opacity-25 w-48 rounded-lg py-3 ${
             slug === "sp500" ? "bg-black text-white" : ""
           }`}
@@ -40,7 +41,7 @@ const Constituent = ({ slug }) => {
           SP500
         </button>
         <button
-          onClick={() => router.push("/constituent/nasdaq")}
+          onClick={() => navigate("/constituent/nasdaq")}
           className={`border border-gray-500 border-opacity-25 w-48 rounded-lg py-3 ${
             slug === "nasdaq" ? "bg-black text-white" : ""
           }`}
@@ -48,7 +49,7 @@ const Constituent = ({ slug }) => {
           Nasdaq
         </button>
         <button
-          onClick={() => router.push("/constituent/dowjones")}
+          onClick={() => navigate("/constituent/dowjones")}
           className={`border border-gray-500 border-opacity-25 w-48 rounded-lg py-3 ${
             slug === "dowjones" ? "bg-black text-white" : ""
           }`}
@@ -64,7 +65,7 @@ const Constituent = ({ slug }) => {
               aria-describedby="helper-checkbox-text"
               type="checkbox"
               onChange={() => {
-                router.push(`/constituent/${slug}?historical=${!historical}`);
+                navigate(`/constituent/${slug}?historical=${!historical}`);
               }}
               checked={historical}
               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
@@ -91,25 +92,40 @@ const Constituent = ({ slug }) => {
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
               <tr>
-                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
+                >
                   Name
                 </th>
-                {/* <th scope="col" className="px-6 py-3">
-                  Marktet Cap
-                </th> */}
-                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
+                >
                   Sub-sector
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
+                >
                   Sector
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
+                >
                   Headquarter
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
+                >
                   Founded
                 </th>
-                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th
+                  scope="col"
+                  className="px-6 py-3 bg-gray-50 dark:bg-gray-800"
+                >
                   Added at
                 </th>
               </tr>

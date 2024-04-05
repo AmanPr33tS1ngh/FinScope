@@ -10,7 +10,7 @@ CORS(app)
 
 fmp_url = "https://financialmodelingprep.com/api"
 fmp_key = os.environ.get("FMP_KEY")
-free_fmp_key = os.environ.get("FREE_FMP_KEY")
+free_fmp_key = 'JQiS1BSGhNOqPt11Cu7XlEB39hBA4mOF' #os.environ.get("FREE_FMP_KEY")
 
 def get_response(url):
     response = requests.get(url)
