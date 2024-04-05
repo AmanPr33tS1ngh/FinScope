@@ -18,5 +18,4 @@ lib/
 static/
 include/
 pyvenv.cfg
-env
-.env
+backend/.env

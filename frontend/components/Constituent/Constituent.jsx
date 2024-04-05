@@ -4,7 +4,7 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import HOSTPORT from "@/env";
 
-const Dashboard = ({ slug }) => {
+const Constituent = ({ slug }) => {
   console.log("slug", slug);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,8 +57,8 @@ const Dashboard = ({ slug }) => {
         </button>
       </div>
       <div>
-        <div class="flex justify-center my-5">
-          <div class="flex items-center h-5">
+        <div className="flex justify-center my-5">
+          <div className="flex items-center h-5">
             <input
               id="helper-checkbox"
               aria-describedby="helper-checkbox-text"
@@ -67,19 +67,19 @@ const Dashboard = ({ slug }) => {
                 router.push(`/constituent/${slug}?historical=${!historical}`);
               }}
               checked={historical}
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
             />
           </div>
-          <div class="ms-2 text-sm">
+          <div className="ms-2 text-sm">
             <label
-              for="helper-checkbox"
-              class="font-medium text-gray-900 dark:text-gray-300"
+              htmlFor="helper-checkbox"
+              className="font-medium text-gray-900 dark:text-gray-300"
             >
               Historical
             </label>
             <p
               id="helper-checkbox-text"
-              class="text-xs font-normal text-gray-500 dark:text-gray-300"
+              className="text-xs font-normal text-gray-500 dark:text-gray-300"
             >
               Historical MSG
             </p>
@@ -87,48 +87,48 @@ const Dashboard = ({ slug }) => {
         </div>
       </div>
       <div>
-        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
-          <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase dark:text-gray-400">
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
               <tr>
-                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
                   Name
                 </th>
-                {/* <th scope="col" class="px-6 py-3">
+                {/* <th scope="col" className="px-6 py-3">
                   Marktet Cap
                 </th> */}
-                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
                   Sub-sector
                 </th>
-                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
                   Sector
                 </th>
-                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
                   Headquarter
                 </th>
-                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
                   Founded
                 </th>
-                <th scope="col" class="px-6 py-3 bg-gray-50 dark:bg-gray-800">
+                <th scope="col" className="px-6 py-3 bg-gray-50 dark:bg-gray-800">
                   Added at
                 </th>
               </tr>
             </thead>
             <tbody>
-              {constituents.map((constituent, index) => (
+              {constituents?.map((constituent, index) => (
                 <tr index={index}>
                   <th
                     scope="row"
-                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800"
+                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap bg-gray-50 dark:text-white dark:bg-gray-800"
                   >
                     {constituent.name}&nbsp;(<em>{constituent.symbol}</em>)
                   </th>
-                  {/* <td class="px-6 py-4">{constituent.marketCap}</td> */}
-                  <td class="px-6 py-4">{constituent.subSector}</td>
-                  <td class="px-6 py-4">{constituent.sector}</td>
-                  <td class="px-6 py-4">{constituent.headQuarter}</td>
-                  <td class="px-6 py-4">{constituent.founded}</td>
-                  <td class="px-6 py-4">{constituent.dateFirstAdded}</td>
+                  {/* <td className="px-6 py-4">{constituent.marketCap}</td> */}
+                  <td className="px-6 py-4">{constituent.subSector}</td>
+                  <td className="px-6 py-4">{constituent.sector}</td>
+                  <td className="px-6 py-4">{constituent.headQuarter}</td>
+                  <td className="px-6 py-4">{constituent.founded}</td>
+                  <td className="px-6 py-4">{constituent.dateFirstAdded}</td>
                 </tr>
               ))}
             </tbody>
@@ -139,4 +139,4 @@ const Dashboard = ({ slug }) => {
   );
 };
 
-export default Dashboard;
+export default Constituent;

@@ -24,15 +24,15 @@ def get_market_broadview():
     hist = ''
     if historical:
         hist = 'historical/'
-        
+
     key = free_fmp_key
     if constituent == 'sp500':
         key = fmp_key
-        
+
     url = f'{fmp_url}/v3/{hist}{constituent}_constituent?apikey={key}'
     print('url', url)
     response = get_response(url)
-    
+
     return jsonify({'success': True, 'constituents': response})
 
 @app.route("/calendar/", methods=["POST"])
@@ -62,7 +62,7 @@ def get_calendar():
         #     '/api/v4/?&apikey=',
         # ]
 
-        url = f'{fmp_url}/api/{version}/{cal_url}{ticker}?{duration}&apikey={key}'
+        url = f'{fmp_url}/{version}/{cal_url}{ticker}?{duration}&apikey={key}'
 
         response = get_response(url)
 
@@ -71,9 +71,9 @@ def get_calendar():
     except Exception as e:
         print('err', str(e))
         return jsonify({'success': False, 'err': str(e)})
-    
-    
-@app.route("/market-cap/", methods=["GET"])
+
+
+@app.route("/market-cap/", methods=["POST"])
 def get_market_cap():
     historical = request.json.get("historical") # bool
     ticker = request.json.get('ticker') # AAPL
@@ -88,14 +88,17 @@ def get_market_cap():
         limit = f'limit={limit_val}&'
         duration = f'from={start}&to={end}'
 
-    url = f'{fmp_url}/api/v3/{cap_url}/{ticker}?{limit}{duration}&apikey={free_fmp_key}'
+    url = f'{fmp_url}/v3/{cap_url}/{ticker}?{limit}{duration}&apikey={free_fmp_key}'
+    print(url)
 
     response = get_response(url)
+    if type(response) == list:
+        response = response[0]
 
     print('response', response)
-    return jsonify({'success': True, 'data': response})
+    return jsonify({'success': True, 'company': response})
 
-@app.route("/analyst-estimate/", methods=["GET"])
+@app.route("/analyst-estimate/", methods=["POST"])
 def get_analyst_estimate():
     ticker = request.json.get('ticker')
     recommendation = request.json.get('recommendation')
@@ -104,11 +107,13 @@ def get_analyst_estimate():
     if recommendation:
         url = 'analyst-stock-recommendations'
 
-    url = f'{fmp_url}/api/v3/{url}/{ticker}?apikey={fmp_key}'
-    response = get_response(url)
+    url = f'{fmp_url}/v3/{url}/{ticker}?apikey={fmp_key}'
+    print(url)
 
+    response = get_response(url)
     print('response', response)
-    return jsonify({'success': True, 'data': response})
+
+    return jsonify({'success': True, 'estimates': response})
 
 
 if __name__ == '__main__':

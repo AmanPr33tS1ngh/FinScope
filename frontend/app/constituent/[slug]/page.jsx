@@ -1,11 +1,11 @@
 "use client";
 
-import Dashboard from "@/components/Constituent/Constituent";
 import React from "react";
+import Constituent from "@/components/Constituent/Constituent";
 
 const DashboardPage = ({ params }) => {
   const slug = params.slug;
-  return <Dashboard slug={slug} />;
+  return <Constituent slug={slug} />;
 };
 
 export default DashboardPage;
