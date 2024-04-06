@@ -143,7 +143,9 @@ def get_market_cap():
     response = get_response(url)
     if type(response) == list:
         response = response[0]
-
+        
+    # 'https://financialmodelingprep.com/api/v3/historical-price-full/index/%5EDJI?apikey='
+    
     print('response', response)
     return jsonify({'success': True, 'company': response})
 
