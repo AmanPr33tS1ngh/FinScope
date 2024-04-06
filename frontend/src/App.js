@@ -17,6 +17,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/analyst-estimate" element={<AnalystEstimate />} />
+        <Route path="/market-cap/:ticker" element={<MarketCap />} />
         <Route path="/market-cap" element={<MarketCap />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/" element={<Constituent />} />

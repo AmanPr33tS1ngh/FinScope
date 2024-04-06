@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import requests
 from flask_cors import CORS
+import pandas as pd
 
 load_dotenv()
 app = Flask(__name__)
@@ -10,7 +11,7 @@ CORS(app)
 
 fmp_url = "https://financialmodelingprep.com/api"
 fmp_key = os.environ.get("FMP_KEY")
-free_fmp_key = 'JQiS1BSGhNOqPt11Cu7XlEB39hBA4mOF' #os.environ.get("FREE_FMP_KEY")
+free_fmp_key = 'bf5ec962f7ea40f40b0dec209cb7713e' #os.environ.get("FREE_FMP_KEY")
 
 def get_response(url):
     response = requests.get(url)
@@ -18,22 +19,70 @@ def get_response(url):
 
 @app.route("/market-broadview/", methods=["POST"])
 def get_market_broadview():
-    print(1)
-    constituent = request.json.get('constituent') # sp500, dowjones, nasdaq
-    historical = request.json.get('historical')
-    hist = ''
-    if historical:
-        hist = 'historical/'
+    try:
+        constituent = request.json.get('constituent') # sp500, dowjones, nasdaq
+        historical = request.json.get('historical')
+        hist = ''
+        if historical:
+            hist = 'historical/'
 
-    key = free_fmp_key
-    if constituent == 'sp500':
-        key = fmp_key
+        key = free_fmp_key
+        if constituent == 'sp500':
+            key = fmp_key
 
-    url = f'{fmp_url}/v3/{hist}{constituent}_constituent?apikey={key}'
-    print('url', url)
-    response = get_response(url)
+        url = f'{fmp_url}/v3/{hist}{constituent}_constituent?apikey={key}'
+        print('url', url)
+        response = get_response(url)
+        
+        if type(response) == dict:
+            return jsonify({"success": False, "constituents": list(), 'fmp_response': response})
 
-    return jsonify({'success': True, 'constituents': response})
+        df = pd.DataFrame(response)
+        
+        sector_counts = df.groupby('sector').size().reset_index(name='count').sort_values(by='count', ascending=False)
+        subsector_counts = df.groupby('subSector').size().reset_index(name='count').sort_values(by='count', ascending=False)
+
+        sectors = sector_counts.rename(columns={'sector': 'x', 'count': 'y'}).to_dict(orient='records')
+        sub_sectors = subsector_counts.rename(columns={'subSector': 'x', 'count': 'y'}).to_dict(orient='records')
+
+        return jsonify({'success': True, 'constituents': response, 'sectors': sectors, 'sub_sectors': sub_sectors})
+    except Exception as e:
+        return jsonify({'success': False, 'constituents': list(), 'err': str(e)})
+        
+
+@app.route("/tickers/", methods=["POST"])
+def get_tickers():
+    try:
+        query = request.json.get('query') or ''
+        if query:
+            query = f'query={query}&'
+            
+        limit = request.json.get('limit') or ''
+        if limit:
+            limit = f'limit={limit}&'
+            
+        exchange = request.json.get('exchange') or '&'
+        if exchange:
+            exchange = f'exchange={exchange}&'
+            
+        url = f'{fmp_url}/v3/search-ticker?{query}{limit}{exchange}apikey={free_fmp_key}'
+        print(url)
+        response = get_response(url)
+        
+        if type(response) == dict:
+            return jsonify({"success": False, "tickers": list(), 'fmp_response': response, })
+
+        print('res', response)
+        df = pd.DataFrame(response)
+        if 'symbol' in df:
+            df['label'] = df['symbol']
+            df['value'] = df['symbol']
+        return jsonify({'success': True, "tickers": df.to_dict(orient='records'), })
+    
+    except Exception as e:
+        print('err', str(e))
+        return jsonify({'success': False, 'err': str(e), "tickers": list(), })
+
 
 @app.route("/calendar/", methods=["POST"])
 def get_calendar():

@@ -2,16 +2,21 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import HOSTPORT from "../../env";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import Treemap from "../../components/ApexTreemap/Treemap";
 
 const Constituent = () => {
   let { slug } = useParams();
-
+  if (!slug) {
+    slug = "sp500";
+  }
   const { search } = useLocation();
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(search);
   const historical = queryParams.get("historical") === "true" || false;
   const [constituents, setConstituents] = useState([]);
+  const [sectors, setSectors] = useState([]);
+  const [subSectors, setSubSectors] = useState([]);
 
   useEffect(() => {
     getConstituent();
@@ -27,8 +32,11 @@ const Constituent = () => {
         const response = res.data;
         console.log("response", response);
         setConstituents(response.constituents);
+        setSectors(response.sectors);
+        setSubSectors(response.sub_sectors);
       });
   };
+
   return (
     <div>
       <div className="my-2 flex justify-around items-center">
@@ -57,6 +65,7 @@ const Constituent = () => {
           Dow Jones
         </button>
       </div>
+
       <div>
         <div className="flex justify-center my-5">
           <div className="flex items-center h-5">
@@ -87,6 +96,17 @@ const Constituent = () => {
           </div>
         </div>
       </div>
+      <div className="m-5">
+        {sectors?.length ? <Treemap data={sectors} height={200} /> : null}
+      </div>
+      {slug === "sp500" ? (
+        <div className="m-5">
+          {subSectors?.length ? (
+            <Treemap data={subSectors} height={200} />
+          ) : null}
+        </div>
+      ) : null}
+
       <div>
         <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

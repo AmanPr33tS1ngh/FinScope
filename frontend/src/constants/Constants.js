@@ -1,0 +1,17 @@
+export const EXCHANGES = [
+  "PNK",
+  "NASDAQ",
+  "NYSE",
+  "BSE",
+  "XETRA",
+  "LSE",
+  "AMEX",
+  "HKSE",
+  "JPX",
+  "ASX",
+  "SHZ",
+  "NSE",
+  "EURONEXT",
+  "SHH",
+  "TSX",
+];
