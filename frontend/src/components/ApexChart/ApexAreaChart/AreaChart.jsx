@@ -2,11 +2,6 @@ import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const AreaChart = ({ series, dates }) => {
-  const [areaSeries, setAreaSeries] = useState(series);
-  useEffect(() => {
-    setAreaSeries(series);
-  }, [series]);
-
   return (
     <div id="chart">
       <ReactApexChart
@@ -32,7 +27,7 @@ const AreaChart = ({ series, dates }) => {
             },
           },
         }}
-        series={areaSeries}
+        series={series}
         type="area"
         height={550}
       />
