@@ -4,6 +4,7 @@ import os
 import requests
 from flask_cors import CORS
 import pandas as pd
+from datetime import datetime
 
 load_dotenv()
 app = Flask(__name__)
@@ -87,20 +88,27 @@ def get_tickers():
 @app.route("/calendar/", methods=["POST"])
 def get_calendar():
     try:
-        start_date = request.json.get('start_date') # 2021-11-10
-        end_date = request.json.get('end_date') # 2022-02-01
-        cal_url = request.json.get('cal_url')
-        ticker = request.json.get('ticker') or ''
+        start_date = request.json.get('startDate') # 2021-11-10
+        end_date = request.json.get('endDate') # 2022-02-01
+        date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+        strf_format = "%Y-%m-%d"
+        start_date = datetime.strptime(start_date, date_format).strftime(strf_format)
+        end_date = datetime.strptime(end_date, date_format).strftime(strf_format)
+        
+        print('ssss', type(start_date), type(end_date))
+        cal_url = request.json.get('calUrl')
+        # ticker = request.json.get('ticker') or ''
         key = free_fmp_key
         version = 'v3'
-
+        
+        # if cal_url == 'earning_calendar':
+        #     ticker = ''
+            
         if cal_url == 'earning-calendar-confirmed' or cal_url == 'ipo-calendar-confirmed':
             version = 'v4'
             key = fmp_key
 
-        duration = ''
-        if cal_url != 'earning_calendar':
-            duration = f'from={start_date}&to={end_date}'
+        duration = f'from={start_date}&to={end_date}'
 
         # urls = [
         #     '/earning_calendar/' # free,
@@ -111,12 +119,14 @@ def get_calendar():
         #     '/api/v4/?&apikey=',
         # ]
 
-        url = f'{fmp_url}/{version}/{cal_url}{ticker}?{duration}&apikey={key}'
-
+        # url = f'{fmp_url}/{version}/{cal_url}{ticker}?{duration}&apikey={key}'
+        url = f'{fmp_url}/{version}/{cal_url}?{duration}&apikey={key}'
+        
+        print('urlllll', url)
         response = get_response(url)
 
-        print('response', response)
-        return jsonify({'success': True, 'data': response})
+        # print('response', response)
+        return jsonify({'success': True, 'calendarData': response})
     except Exception as e:
         print('err', str(e))
         return jsonify({'success': False, 'err': str(e)})

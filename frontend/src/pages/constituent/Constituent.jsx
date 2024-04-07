@@ -7,7 +7,7 @@ import Treemap from "../../components/ApexChart/ApexTreemap/Treemap";
 const Constituent = () => {
   let { slug } = useParams();
   if (!slug) {
-    slug = "sp500";
+    slug = "nasdaq";
   }
   const { search } = useLocation();
   const navigate = useNavigate();

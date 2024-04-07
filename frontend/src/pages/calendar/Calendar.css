@@ -1,0 +1,4 @@
+.fc-popover-body {
+  max-height: 200px;
+  overflow-y: auto;
+}
