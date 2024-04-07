@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import HOSTPORT from "../../env";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import Treemap from "../../components/ApexTreemap/Treemap";
+import Treemap from "../../components/ApexChart/ApexTreemap/Treemap";
 
 const Constituent = () => {
   let { slug } = useParams();

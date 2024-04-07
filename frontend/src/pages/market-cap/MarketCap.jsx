@@ -1,11 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import HOSTPORT from "../../env";
 import { useLocation, useParams } from "react-router-dom";
-import Search from "../../components/Search/Search";
+// import Search from "../../components/Search/Search";
 import Select from "react-select";
-import { EXCHANGES } from "../../constants/Constants";
+import {
+  ADJ_CLOSE,
+  EXCHANGES,
+  SERIES_OPTIONS,
+} from "../../constants/Constants";
 import { useNavigate } from "react-router-dom";
+import _debounce from "lodash/debounce";
+import AreaChart from "../../components/ApexChart/ApexAreaChart/AreaChart";
 
 const MarketCap = () => {
   const navigate = useNavigate();
@@ -15,13 +21,12 @@ const MarketCap = () => {
   const [company, setCompany] = useState(null);
   const [tickers, setTickers] = useState([]);
   const [query, setQuery] = useState("");
-  const [selectedExchange, setSelectedExchange] = useState({
-    label: null,
-    value: null,
-  });
+  const [selectedExchange, setSelectedExchange] = useState(null);
+  const [companyHistory, setCompanyHistory] = useState([]);
+  const [series, setSeries] = useState([]);
+  const [seriesOptions, setSeriesOptions] = useState([ADJ_CLOSE]);
 
   let { ticker } = useParams();
-  console.log(" efft ticker", ticker);
 
   const { search } = useLocation();
 
@@ -29,12 +34,38 @@ const MarketCap = () => {
   const historical = queryParams.get("historical") === "true" || false;
 
   useEffect(() => {
-    // console.log("use efft ticker", ticker);
     if (ticker) getMarketCap();
-    // else getTickers();
   }, [ticker]);
 
-  const getTickers = () => {
+  useEffect(() => {
+    changeSeries();
+  }, [seriesOptions, series]);
+
+  const changeSeries = () => {
+    const newSeries = [];
+    seriesOptions.map((o) => {
+      const option = o?.value;
+      const name = o?.label;
+      SERIES_OPTIONS.map((opt) => {
+        if (opt?.value === option) {
+          const series = companyHistory.map((history) => {
+            return history[option];
+          });
+          newSeries.push({
+            name: name,
+            data: series,
+          });
+        }
+      });
+    });
+    setSeries(newSeries);
+  };
+
+  const changeSeriesOptions = (e) => {
+    setSeriesOptions(e);
+  };
+
+  const getTickers = (query) => {
     const data = {
       limit: limit,
       query: query,
@@ -42,7 +73,6 @@ const MarketCap = () => {
     };
     axios.post(`${HOSTPORT}/tickers/`, data).then((res) => {
       const response = res.data;
-      console.log("resss", response);
       setTickers(response.tickers);
     });
   };
@@ -57,8 +87,8 @@ const MarketCap = () => {
     };
     axios.post(`${HOSTPORT}/market-cap/`, data).then((res) => {
       const response = res.data;
-      console.log("response", response);
       setCompany(response.company);
+      setCompanyHistory(response.price_history);
     });
   };
 
@@ -69,16 +99,22 @@ const MarketCap = () => {
   const changeExchange = (e) => {
     setSelectedExchange(e);
   };
-  const changeQuery = (e) => {
-    setQuery(e.target.value);
-  };
-  const onSubmit = () => {
-    navigate(`/market-cap/${query}`);
-  };
+
+  const callTickerAPI = _debounce((value) => {
+    getTickers(value);
+  }, 500);
+
+  const changeQuery = useCallback((e) => {
+    setQuery(e);
+    if (e) {
+      callTickerAPI(e);
+    }
+  }, []);
+
   return (
     <div>
       <div className="flex justify-evenly items-center mt-5">
-        {/* <div className=" w-1/6">
+        <div className=" w-1/6">
           <Select
             value={selectedExchange}
             onChange={changeExchange}
@@ -88,36 +124,53 @@ const MarketCap = () => {
             placeholder={"Select exchange..."}
             isSearchable={true}
           />
-        </div> */}
-        {/* <Select
-        value={{
-          label: ticker,
-          value: ticker,
-        }}
-        onChange={changeTicker}
-        options={tickers}
-        placeholder={"Select ticker..."}
-      /> */}
-        <div className=" w-3/6">
-          <Search
-            placeholder={"Enter ticker..."}
-            onChange={changeQuery}
-            value={query}
-            onSubmit={onSubmit}
+        </div>
+
+        <div className=" w-1/6">
+          <Select
+            value={
+              ticker
+                ? {
+                    label: ticker,
+                    value: ticker,
+                  }
+                : null
+            }
+            onChange={changeTicker}
+            options={tickers}
+            placeholder={"Select ticker..."}
+            onInputChange={changeQuery}
+            inputValue={query}
           />
         </div>
       </div>
       {ticker ? (
         <div className="mt-5">
-          <div className=" text-center">Symbol: {company?.symbol}</div>
-          <div className=" text-center">Date: {company?.date}</div>
-          <div className=" text-center">
-            Market Capitalization: {company?.marketCap}
+          <div className="w-[20%] m-5 bg-gray-300 bg-opacity-25 rounded-xl font-sans mx-auto p-2 text-center">
+            <div className=" text-2xl font-bold text-black opacity-70">
+              {company?.symbol}
+            </div>
+            <div className="font-light text-sm">{company?.marketCap}</div>
           </div>
         </div>
-      ) : (
-        "Enter ticker"
-      )}
+      ) : null}
+      <div className="w-1/2 m-auto">
+        <Select
+          value={seriesOptions}
+          isMulti={true}
+          isSearchable={true}
+          isClearable={true}
+          onChange={changeSeriesOptions}
+          options={SERIES_OPTIONS}
+          placeholder={"Select to show chart..."}
+        />
+      </div>
+      {series?.length ? (
+        <AreaChart
+          dates={companyHistory.map((item) => item.date)}
+          series={series}
+        />
+      ) : null}
     </div>
   );
 };
