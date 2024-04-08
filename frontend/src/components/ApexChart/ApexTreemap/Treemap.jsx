@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ReactApexChart from "react-apexcharts";
 
 const Treemap = ({ data, title, height }) => {
@@ -16,6 +16,7 @@ const Treemap = ({ data, title, height }) => {
             },
             title: {
               text: title,
+              align: "center",
             },
           }}
           series={[

@@ -17,11 +17,13 @@ function App() {
     <Router>
       <Routes>
         <Route path="/analyst-estimate/:ticker" element={<AnalystEstimate />} />
+        <Route path="/analyst-estimate" element={<AnalystEstimate />} />
         <Route path="/market-cap/:ticker" element={<MarketCap />} />
         <Route path="/market-cap" element={<MarketCap />} />
         <Route path="/calendar/:calendarType" element={<Calendar />} />
         <Route path="/" element={<Constituent />} />
         <Route path="/constituent/:slug" element={<Constituent />} />
+        <Route path="/intra-day" element={<Constituent />} />
       </Routes>
     </Router>
   );

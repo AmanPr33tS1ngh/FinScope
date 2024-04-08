@@ -12,6 +12,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import _debounce from "lodash/debounce";
 import AreaChart from "../../components/ApexChart/ApexAreaChart/AreaChart";
+import TickerSearch from "../../components/TickerSearch/TickerSearch";
 
 const MarketCap = () => {
   const navigate = useNavigate();
@@ -112,66 +113,37 @@ const MarketCap = () => {
   }, []);
 
   return (
-    <div>
-      <div className="flex justify-evenly items-center mt-5">
-        <div className=" w-1/6">
-          <Select
-            value={selectedExchange}
-            onChange={changeExchange}
-            options={EXCHANGES.map((exchange) => {
-              return { label: exchange, value: exchange };
-            })}
-            placeholder={"Select exchange..."}
-            isSearchable={true}
-          />
-        </div>
-
-        <div className=" w-1/6">
-          <Select
-            value={
-              ticker
-                ? {
-                    label: ticker,
-                    value: ticker,
-                  }
-                : null
-            }
-            onChange={changeTicker}
-            options={tickers}
-            placeholder={"Select ticker..."}
-            onInputChange={changeQuery}
-            inputValue={query}
-          />
-        </div>
-      </div>
-      {ticker ? (
-        <div className="mt-5">
-          <div className="w-[20%] m-5 bg-gray-300 bg-opacity-25 rounded-xl font-sans mx-auto p-2 text-center">
-            <div className=" text-2xl font-bold text-black opacity-70">
-              {company?.symbol}
+    <TickerSearch
+      selectedExchange={selectedExchange}
+      changeExchange={changeExchange}
+      ticker={ticker}
+      tickers={tickers}
+      changeQuery={changeQuery}
+      query={query}
+      changeTicker={changeTicker}
+      seriesOptions={seriesOptions}
+      changeSeriesOptions={changeSeriesOptions}
+      showSeriesOptions={true}
+      midSection={
+        ticker ? (
+          <div className="mt-5">
+            <div className="w-[20%] m-5 bg-gray-300 bg-opacity-25 rounded-xl font-sans mx-auto p-2 text-center">
+              <div className=" text-2xl font-bold text-black opacity-70">
+                {company?.symbol}
+              </div>
+              <div className="font-light text-sm">{company?.marketCap}</div>
             </div>
-            <div className="font-light text-sm">{company?.marketCap}</div>
           </div>
-        </div>
-      ) : null}
-      <div className="w-1/2 m-auto">
-        <Select
-          value={seriesOptions}
-          isMulti={true}
-          isSearchable={true}
-          isClearable={true}
-          onChange={changeSeriesOptions}
-          options={SERIES_OPTIONS}
-          placeholder={"Select to show chart..."}
-        />
-      </div>
+        ) : null
+      }
+    >
       {series?.length ? (
         <AreaChart
           dates={companyHistory.map((item) => item.date)}
           series={series}
         />
       ) : null}
-    </div>
+    </TickerSearch>
   );
 };
 export default MarketCap;

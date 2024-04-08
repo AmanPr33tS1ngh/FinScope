@@ -1,15 +1,31 @@
-"use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import HOSTPORT from "../../env";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import LineChart from "../../components/ApexChart/ApexLineChart/LineChart";
+import Treemap from "../../components/ApexChart/ApexTreemap/Treemap";
+import BarChart from "../../components/ApexChart/ApexBarChart/BarChart";
+import { ADJ_CLOSE, SERIES_OPTIONS } from "../../constants/Constants";
+import _debounce from "lodash/debounce";
+import TickerSearch from "../../components/TickerSearch/TickerSearch";
 
 const AnalystEstimate = () => {
-  useEffect(() => {
-    getEstimates();
-  }, []);
+  const [selectedExchange, setSelectedExchange] = useState(null);
+  const [seriesOptions, setSeriesOptions] = useState([ADJ_CLOSE]);
+  const [tickers, setTickers] = useState([]);
+  const [query, setQuery] = useState("");
 
   let { ticker } = useParams();
+
+  useEffect(() => {
+    if (ticker) {
+      getEstimates();
+    }
+  }, [ticker]);
+
+  // useEffect(() => {
+  //   changeSeries();
+  // }, [seriesOptions, series]);
 
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -17,7 +33,7 @@ const AnalystEstimate = () => {
   const queryParams = new URLSearchParams(search);
   const recommendation = queryParams.get("recommendation") === "true" || false;
 
-  const [estimates, setEstimates] = useState(null);
+  const [estimates, setEstimates] = useState([]);
 
   const getEstimates = () => {
     axios
@@ -32,8 +48,65 @@ const AnalystEstimate = () => {
       });
   };
 
+  const changeSeriesOptions = (e) => {
+    setSeriesOptions(e);
+  };
+
+  const getTickers = (query) => {
+    const data = {
+      // limit: limit,
+      query: query,
+      exchange: selectedExchange?.label,
+    };
+    axios.post(`${HOSTPORT}/tickers/`, data).then((res) => {
+      const response = res.data;
+      setTickers(response.tickers);
+    });
+  };
+
+  const changeTicker = (e) => {
+    navigate(`/analyst-estimate/${e?.value}`);
+  };
+
+  const changeExchange = (e) => {
+    setSelectedExchange(e);
+  };
+
+  const callTickerAPI = _debounce((value) => {
+    getTickers(value);
+  }, 500);
+
+  const changeQuery = useCallback((e) => {
+    setQuery(e);
+    if (e) {
+      callTickerAPI(e);
+    }
+  }, []);
+
   return (
-    <div>
+    <TickerSearch
+      selectedExchange={selectedExchange}
+      changeExchange={changeExchange}
+      ticker={ticker}
+      tickers={tickers}
+      changeQuery={changeQuery}
+      query={query}
+      changeTicker={changeTicker}
+      seriesOptions={seriesOptions}
+      changeSeriesOptions={changeSeriesOptions}
+      // midSection={
+      //   ticker ? (
+      //     <div className="mt-5">
+      //       <div className="w-[20%] m-5 bg-gray-300 bg-opacity-25 rounded-xl font-sans mx-auto p-2 text-center">
+      //         <div className=" text-2xl font-bold text-black opacity-70">
+      //           {company?.symbol}
+      //         </div>
+      //         <div className="font-light text-sm">{company?.marketCap}</div>
+      //       </div>
+      //     </div>
+      //   ) : null
+      // }
+    >
       {/* {ticker} */}
       <div className="flex justify-center my-5">
         <div className="flex items-center h-5">
@@ -65,6 +138,15 @@ const AnalystEstimate = () => {
           </p>
         </div>
       </div>
+      <LineChart data={estimates} />
+      <Treemap
+        data={estimates.map((estimate) => {
+          return { x: estimate.date, y: estimate.estimatedRevenueAvg };
+        })}
+        height={500}
+        title={"Revenue Composition"}
+      />
+      <BarChart data={estimates} />
       <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="text-xs text-gray-700 uppercase dark:text-gray-400">
@@ -167,7 +249,7 @@ const AnalystEstimate = () => {
           </tbody>
         </table>
       </div>
-    </div>
+    </TickerSearch>
   );
 };
 

@@ -199,8 +199,26 @@ def get_analyst_estimate():
 
     response = get_response(url)
     print('response', response)
-
-    return jsonify({'success': True, 'estimates': response})
+    
+    df = pd.DataFrame(response)
+    df['estimatedRevenueLow'] = df['estimatedRevenueLow'] / 1e9
+    df['estimatedRevenueHigh'] = df['estimatedRevenueHigh'] / 1e9
+    df['estimatedRevenueAvg'] = df['estimatedRevenueAvg'] / 1e9
+    df['estimatedEbitdaLow'] = df['estimatedEbitdaLow'] / 1e9
+    df['estimatedEbitdaHigh'] = df['estimatedEbitdaHigh'] / 1e9
+    df['estimatedNetIncomeLow'] = df['estimatedNetIncomeLow'] / 1e9
+    df['estimatedNetIncomeHigh'] = df['estimatedNetIncomeHigh'] / 1e9
+    df['estimatedNetIncomeAvg'] = df['estimatedNetIncomeAvg'] / 1e9
+    df['estimatedSgaExpenseLow'] = df['estimatedSgaExpenseLow'] / 1e9
+    df['estimatedSgaExpenseHigh'] = df['estimatedSgaExpenseHigh'] / 1e9
+    df['estimatedSgaExpenseAvg'] = df['estimatedSgaExpenseAvg'] / 1e9
+    df['estimatedEbitdaAvg'] = df['estimatedEbitdaAvg'] / 1e9
+    df['estimatedEbitAvg'] = df['estimatedEbitAvg'] / 1e9
+    
+    df.sort_values(by='date',ascending=True, inplace=True)
+    df = df.to_dict(orient='records')
+    
+    return jsonify({'success': True, 'estimates': df})
 
 
 if __name__ == '__main__':
