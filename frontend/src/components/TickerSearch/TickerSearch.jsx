@@ -1,5 +1,9 @@
 import React from "react";
-import { EXCHANGES, SERIES_OPTIONS } from "../../constants/Constants";
+import {
+  EXCHANGES,
+  SERIES_OPTIONS,
+  TIMEFRAME_OPTIONS,
+} from "../../constants/Constants";
 import Select from "react-select";
 
 const TickerSearch = ({
@@ -15,6 +19,9 @@ const TickerSearch = ({
   changeSeriesOptions,
   showSeriesOptions,
   midSection,
+  timeFrameOptions,
+  changeTimeframeOptions,
+  showTimeframeOptions,
 }) => {
   return (
     <div>
@@ -50,8 +57,9 @@ const TickerSearch = ({
         </div>
       </div>
       {midSection}
-      {showSeriesOptions ? (
-        <div className="w-1/2 m-auto">
+
+      <div className={"w-1/2 m-auto mt-3"}>
+        {showSeriesOptions ? (
           <Select
             value={seriesOptions}
             isMulti={true}
@@ -61,8 +69,16 @@ const TickerSearch = ({
             options={SERIES_OPTIONS}
             placeholder={"Select to show chart..."}
           />
-        </div>
-      ) : null}
+        ) : showTimeframeOptions ? (
+          <Select
+            value={timeFrameOptions}
+            isSearchable={true}
+            onChange={changeTimeframeOptions}
+            options={TIMEFRAME_OPTIONS}
+            placeholder={"Select timeframe..."}
+          />
+        ) : null}
+      </div>
       {children}
     </div>
   );

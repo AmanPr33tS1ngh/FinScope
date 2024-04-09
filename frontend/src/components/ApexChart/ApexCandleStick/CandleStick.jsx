@@ -26,6 +26,7 @@ const CandleStick = ({ data }) => {
       }}
       series={series}
       type="candlestick"
+      height={500}
     />
   );
 };

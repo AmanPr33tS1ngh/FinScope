@@ -11,6 +11,7 @@ import Calendar from "./pages/calendar/Calendar";
 import MarketCap from "./pages/market-cap/MarketCap";
 import AnalystEstimate from "./pages/analyst-estimate/AnalystEstimate";
 import Constituent from "./pages/constituent/Constituent";
+import IntraDay from "./pages/intra-day/IntraDay";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
         <Route path="/calendar/:calendarType" element={<Calendar />} />
         <Route path="/" element={<Constituent />} />
         <Route path="/constituent/:slug" element={<Constituent />} />
-        <Route path="/intra-day" element={<Constituent />} />
+        <Route path="/intra-day" element={<IntraDay />} />
+        <Route path="/intra-day/:ticker" element={<IntraDay />} />
       </Routes>
     </Router>
   );

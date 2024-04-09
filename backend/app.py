@@ -221,6 +221,28 @@ def get_analyst_estimate():
     return jsonify({'success': True, 'estimates': df})
 
 
+@app.route("/intra-day/", methods=["POST"])
+def get_intra_day():
+    ticker = request.json.get('ticker')
+    timeframe = request.json.get('timeframe')
+    start_date = request.json.get('startDate')
+    end_date = request.json.get('endDate')
+    
+    date_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+    strf_format = "%Y-%m-%d"
+    start_date = datetime.strptime(start_date, date_format).strftime(strf_format)
+    end_date = datetime.strptime(end_date, date_format).strftime(strf_format)
+    
+    print(type(start_date), type(end_date), start_date, end_date,)
+    url = f'{fmp_url}/v3/historical-chart/{timeframe}/{ticker}?from={start_date}&to={end_date}&apikey={free_fmp_key}'
+    print(url)
+
+    response = get_response(url)
+    # print('response', response)
+    
+    return jsonify({'success': True, 'intra_day_data': response})
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
 
