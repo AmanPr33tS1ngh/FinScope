@@ -48,7 +48,6 @@ const IntraDay = () => {
       })
       .then((res) => {
         const response = res.data;
-        console.log("response", response);
         setIntradaySeries(response.intra_day_data);
       });
   };
@@ -63,7 +62,6 @@ const IntraDay = () => {
 
   const getTickers = (query) => {
     const data = {
-      // limit: limit,
       query: query,
       exchange: selectedExchange?.label,
     };
