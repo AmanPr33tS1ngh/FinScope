@@ -39,3 +39,36 @@ export const TIMEFRAME_OPTIONS = [
   ONE_HOUR,
   FOUR_HOUR,
 ];
+
+export const CRYPTO_NEWS = { label: "CRYPTO NEWS", value: "crypto_news" };
+export const PRESS_RELEASES = {
+  label: "PRESS RELEASES",
+  value: "press-releases",
+};
+export const FOREX_NEWS = {
+  label: "FOREX NEWS",
+  value: "forex_news",
+};
+export const RSS_FEED = {
+  label: "STOCK NEWS RSS FEED",
+  value: "stock-news-sentiments-rss-feed",
+};
+
+export const STOCK_NEWS = {
+  label: "STOCK NEWS",
+  value: "stock_news",
+};
+
+export const GENERAL_NEWS = {
+  label: "GENERAL NEWS",
+  value: "general_news",
+};
+
+export const NEWS_TYPE = [
+  CRYPTO_NEWS,
+  PRESS_RELEASES,
+  FOREX_NEWS,
+  RSS_FEED,
+  STOCK_NEWS,
+  GENERAL_NEWS,
+];

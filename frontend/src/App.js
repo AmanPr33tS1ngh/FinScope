@@ -12,6 +12,7 @@ import MarketCap from "./pages/market-cap/MarketCap";
 import AnalystEstimate from "./pages/analyst-estimate/AnalystEstimate";
 import Constituent from "./pages/constituent/Constituent";
 import IntraDay from "./pages/intra-day/IntraDay";
+import SentimentAnalysis from "./pages/sentiment-analysis/SentimentAnalysis";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
         <Route path="/constituent/:slug" element={<Constituent />} />
         <Route path="/intra-day" element={<IntraDay />} />
         <Route path="/intra-day/:ticker" element={<IntraDay />} />
+        <Route path="/sentiment-analysis" element={<SentimentAnalysis />} />
       </Routes>
     </Router>
   );
