@@ -19,3 +19,6 @@ static/
 include/
 pyvenv.cfg
 backend/.env
+.share/*
+.share/
+share/

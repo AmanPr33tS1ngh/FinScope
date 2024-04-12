@@ -447,6 +447,8 @@ def sentiment_analysis():
 
     # response = get_response(url)
     
+    # fix rss feed and press releases apis
+    
     # print('response', response)
     
     df = pd.DataFrame(sent_data) #pd.DataFrame(response)
@@ -457,7 +459,9 @@ def sentiment_analysis():
 
     # sentiment acc to title 
     df['sentiment'] = df['title'].apply(lambda x: sentiment_score(x, tokenizer, model))
-    
+    df['publishedDate'] = pd.to_datetime(df['publishedDate'])
+    df['publishedDate'] = df['publishedDate'].dt.strftime('%d %b %Y %I:%M %p')
+
     return jsonify({'success': True, 'news_sentiments': df.to_dict(orient="records")})
 
 
