@@ -18,11 +18,12 @@ const SentimentAnalysis = () => {
     axios
       .post(`${HOSTPORT}/sentiment-analysis/`, {
         news_type: selectedType?.value,
+        ticker: "AAPL",
+        page: 0,
       })
       .then((res) => {
         const responseData = res.data;
         setSentiments(responseData.news_sentiments);
-        console.log("response", responseData);
       });
   };
 
@@ -52,7 +53,7 @@ const SentimentAnalysis = () => {
       <Table tHeadData={["Index", "Title", "Published Date", "Link"]}>
         {sentiments.map((news, index) => (
           <tr
-            className={`my-10 ${
+            className={`my-10 border border-gray-300 rounded-lg ${
               news.sentiment > 2.5
                 ? "bg-green-200"
                 : news.sentiment < 2.5
@@ -61,7 +62,7 @@ const SentimentAnalysis = () => {
             }`}
             index={index}
           >
-            <td>{index + 1}</td>
+            <td className=" flex justify-center">{index + 1}</td>
             <td>
               <div className="grid grid-cols-12">
                 <img class="rounded-full col-span-1" src={news.image} />

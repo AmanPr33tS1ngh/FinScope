@@ -1,12 +1,6 @@
 import logo from "./logo.svg";
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Calendar from "./pages/calendar/Calendar";
 import MarketCap from "./pages/market-cap/MarketCap";
 import AnalystEstimate from "./pages/analyst-estimate/AnalystEstimate";

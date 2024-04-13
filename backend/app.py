@@ -439,19 +439,22 @@ def sentiment_score(text, tokenizer, model):
 def sentiment_analysis():
     news_type = request.json.get('news_type')
     version = "v4"
-    if news_type == 'stock_news':
+    ticker = ""
+    if news_type == 'stock_news' or news_type == 'press-releases':
         version = 'v3'
-        
-    url = f'{fmp_url}/{version}/{news_type}?&apikey={fmp_key}'
+    ticker = f"/{request.json.get('ticker')}" if news_type == 'press-releases' else ""
+    page = f"page={request.json.get('page')}" if news_type == "stock-news-sentiments-rss-feed" else ""
+    
+    url = f'{fmp_url}/{version}/{news_type}{ticker}?{page}&apikey={fmp_key}'
     print(url)
 
-    # response = get_response(url)
+    response = get_response(url)
     
     # fix rss feed and press releases apis
     
-    # print('response', response)
+    print('response', response)
     
-    df = pd.DataFrame(sent_data) #pd.DataFrame(response)
+    df = pd.DataFrame(response) #pd.DataFrame(sent_data) #
     
     bert_model = "nlptown/bert-base-multilingual-uncased-sentiment"
     tokenizer = AutoTokenizer.from_pretrained(bert_model)
@@ -459,8 +462,13 @@ def sentiment_analysis():
 
     # sentiment acc to title 
     df['sentiment'] = df['title'].apply(lambda x: sentiment_score(x, tokenizer, model))
-    df['publishedDate'] = pd.to_datetime(df['publishedDate'])
-    df['publishedDate'] = df['publishedDate'].dt.strftime('%d %b %Y %I:%M %p')
+    if 'publishedDate' in df.columns:
+      df['publishedDate'] = pd.to_datetime(df['publishedDate'])
+      df['publishedDate'] = df['publishedDate'].dt.strftime('%d %b %Y %I:%M %p')
+
+    elif 'date' in df.columns:
+      df['date'] = pd.to_datetime(df['date'])
+      df['date'] = df['date'].dt.strftime('%d %b %Y %I:%M %p')
 
     return jsonify({'success': True, 'news_sentiments': df.to_dict(orient="records")})
 
